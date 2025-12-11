@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Provas</title>
+    <link rel="icon" href="https://images.vexels.com/media/users/3/136535/isolated/preview/393a7d8e436bccc3aedfd43865b48890-icone-de-cadeado.png" type="image/png">
+    
+    <style>
+        /* Bloqueio total da seleção de texto */
+        * {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
+        
+        /* Exceção para campos de input e textarea na identificação */
+        input[type="text"], 
+        select, 
+        textarea {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+        
+        /* Bloqueio adicional para Firefox */
+        html, body {
+            -moz-user-select: none !important;
+        }
+    </style>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // ============================================================================
+        // CONFIGURAÇÃO DAS DISCIPLINAS - INSIRA SUAS QUESTÕES AQUI
+        // ============================================================================
+
+        const DISCIPLINAS_CONFIG = {
+          "Banco de Dados SQL": {
+            "questoes": [
+            {
+                "textoBase": "Um desenvolvedor backend precisa realizar uma manutenção na base de dados de homologação. A tarefa consiste em limpar todos os registros de uma tabela de logs que cresceu excessivamente, mas a estrutura da tabela (colunas, tipos de dados e constraints) deve ser preservada intacta para novos testes.",
+                "pergunta": "(DML vs DDL) Qual comando abaixo é o mais performático e adequado para remover todos os dados mantendo a estrutura, sendo classificado como DDL?",
+                "opcoes": [
+                "TRUNCATE TABLE",
+                "DROP TABLE",
+                "DELETE FROM",
+                "REMOVE ALL"
+                ],
+                "respostaCorreta": 0,
+                "pontuacao": 5
+            },
+            {
+                "textoBase": "Considere um sistema de E-commerce com duas tabelas principais: 'Clientes' e 'Pedidos'. O departamento de marketing solicitou um relatório contendo todos os clientes cadastrados na base, incluindo aqueles que nunca realizaram nenhum pedido, para enviar um cupom de primeira compra.",
+                "pergunta": "(Joins) Qual tipo de JOIN deve ser utilizado para garantir que todos os clientes sejam listados, independentemente de terem correspondência na tabela de pedidos?",
+                "opcoes": [
+                "INNER JOIN",
+                "RIGHT JOIN",
+                "LEFT JOIN",
+                "CROSS JOIN"
+                ],
+                "respostaCorreta": 2,
+                "pontuacao": 5
+            },
+            {
+                "textoBase": "Ao analisar uma query complexa, um DBA percebeu o uso de uma subquery na lista de seleção (SELECT list) que buscava o nome do departamento para cada funcionário listado. Essa subquery retornava apenas um único valor (o nome) para cada linha processada.",
+                "pergunta": "(Subqueries) Como é classificada uma subquery que retorna exatamente uma linha e uma coluna?",
+                "opcoes": [
+                "Subquery Tabular",
+                "Subquery Escalar",
+                "Subquery Vetorial",
+                "Derived Table"
+                ],
+                "respostaCorreta": 1,
+                "pontuacao": 5
+            },
+            {
+                "textoBase": "Uma instituição financeira precisa implementar uma rotina no banco de dados que realize a transferência de fundos entre contas. Essa operação envolve verificar saldo, debitar de uma conta e creditar em outra, exigindo controle transacional rigoroso e não necessariamente retornando um dado em tela.",
+                "pergunta": "(Procedures) Qual objeto de banco de dados é o mais indicado para encapsular essa lógica de negócio complexa?",
+                "opcoes": [
+                "Scalar Function",
+                "View",
+                "Stored Procedure",
+                "Trigger"
+                ],
+                "respostaCorreta": 2,
+                "pontuacao": 5
+            },
+            {
+                "textoBase": "O gerente de vendas solicitou um relatório que mostrasse apenas as filiais cuja média de faturamento mensal fosse superior a R$ 50.000,00. A consulta SQL já agrupa as vendas por filial usando 'GROUP BY'.",
+                "pergunta": "(Agrupamento) Qual cláusula deve ser utilizada para filtrar o resultado baseando-se no valor agregado (média)?",
+                "opcoes": [
+                "WHERE",
+                "HAVING",
+                "ORDER BY",
+                "LIMIT"
+                ],
+                "respostaCorreta": 1,
+                "pontuacao": 5
+            },
+            {
+                "textoBase": "Em um sistema de log de acessos, é necessário registrar o momento exato em que o usuário efetuou o login. O banco de dados está configurado no fuso horário correto do servidor.",
+                "pergunta": "(Datas) Qual função SQL padrão é comumente utilizada para capturar a data e a hora atuais do sistema no momento da execução do comando?",
+                "opcoes": [
+                "TODAY()",
+                "NOW() ou CURRENT_TIMESTAMP",
+                "GETDATE_ONLY()",
+                "TIME_CURRENT()"
+                ],
+                "respostaCorreta": 1,
+                "pontuacao": 5
+            },
+            {
+                "textoBase": "Para garantir a integridade dos dados, a empresa decidiu que nenhum produto pode ter seu preço de venda alterado para um valor inferior ao preço de custo. Essa validação deve ocorrer automaticamente no banco de dados, bloqueando a operação caso a regra seja violada.",
+                "pergunta": "(Triggers) Qual tipo de Trigger é o mais adequado para realizar essa validação antes que os dados sejam persistidos?",
+                "opcoes": [
+                "AFTER UPDATE",
+                "BEFORE UPDATE",
+                "INSTEAD OF UPDATE",
+                "AFTER INSERT"
+                ],
+                "respostaCorreta": 1,
+                "pontuacao": 5
+            },
+            {
+                "textoBase": "Durante a migração de dados de um sistema legado, alguns registros de clientes ficaram com o campo 'Telefone' vazio. Ao realizar operações matemáticas ou de concatenação envolvendo esses campos, o desenvolvedor notou comportamentos inesperados.",
+                "pergunta": "(NULL) Em SQL, qual é o resultado da expressão '10 + NULL'?",
+                "opcoes": [
+                "10",
+                "0",
+                "NULL",
+                "Erro de Execução"
+                ],
+                "respostaCorreta": 2,
+                "pontuacao": 5
+            },
+            {
+                "textoBase": "Uma tabela de 'Movimentações Financeiras' possui milhões de registros e recebe milhares de novas inserções por minuto (alta taxa de escrita). No entanto, as consultas de leitura são raras. Um desenvolvedor júnior sugeriu criar 10 índices diferentes nessa tabela para 'garantir velocidade futura'.",
+                "pergunta": "(Índices) Qual seria o impacto negativo imediato dessa sugestão no banco de dados?",
+                "opcoes": [
+                "Lentidão nas operações de SELECT",
+                "Lentidão nas operações de INSERT e UPDATE",
+                "Corrupção dos dados armazenados",
+                "Impossibilidade de fazer backup"
+                ],
+                "respostaCorreta": 1,
+                "pontuacao": 5
+            },
+            {
+                "textoBase": "Um analista está revisando scripts SQL gerados automaticamente por uma ferramenta de ORM. Ele precisa classificar os comandos encontrados entre DDL (Data Definition Language) e DML (Data Manipulation Language).",
+                "pergunta": "Analise os itens sobre os comandos encontrados:\nI. O comando DROP TABLE remove a estrutura e os dados.\nII. O comando TRUNCATE TABLE é DML e pode ser revertido facilmente sem transação.\nIII. O comando DELETE FROM sem WHERE apaga os dados, mas mantém a estrutura.\nIV. O comando ALTER TABLE é usado para inserir dados na tabela.\n\nEstão corretos:",
+                "opcoes": [
+                "Apenas I e III",
+                "Apenas I, II e III",
+                "Apenas III e IV",
+                "Todos os itens"
+                ],
+                "respostaCorreta": 0,
+                "pontuacao": 5
+            },
+            {
+                "textoBase": "Durante a modelagem de um banco de dados relacional para uma biblioteca, a equipe discute sobre as restrições de integridade (constraints) necessárias para garantir a consistência entre Livros e Autores.",
+                "pergunta": "Analise os itens sobre Chaves e Restrições:\nI. Uma Primary Key (PK) identifica unicamente um registro e não aceita NULL.\nII. Uma tabela pode possuir múltiplas chaves primárias compostas por colunas diferentes.\nIII. Uma Foreign Key (FK) garante que o valor inserido referencie um valor existente em outra tabela.\nIV. A constraint UNIQUE impede valores duplicados, mas permite múltiplos nulos (dependendo do SGBD).\n\nEstão corretos:",
+                "opcoes": [
+                "Apenas I",
+                "Apenas I, III e IV",
+                "Apenas II e IV",
+                "I, II, III e IV"
+                ],
+                "respostaCorreta": 1,
+                "pontuacao": 10
+            },
+            {
+                "textoBase": "O setor de segurança da informação solicitou que os desenvolvedores não tivessem acesso direto à tabela de salários dos funcionários, mas precisassem acessar nome e departamento para relatórios operacionais.",
+                "pergunta": "Analise os itens sobre Views (Visões):\nI. Views são tabelas virtuais definidas por uma consulta SELECT.\nII. É possível criar uma View que exiba apenas colunas não-confidenciais da tabela original.\nIII. Views sempre armazenam uma cópia física dos dados, duplicando o armazenamento.\nIV. Alterações na estrutura da tabela original podem quebrar a View se não forem tratadas.\n\nEstão corretos:",
+                "opcoes": [
+                "Apenas I e II",
+                "Apenas I, II e IV",
+                "Apenas II e III",
+                "Apenas III e IV"
+                ],
+                "respostaCorreta": 1,
+                "pontuacao": 10
+            },
+            {
+                "textoBase": "Um cientista de dados está extraindo métricas de uma tabela de vendas para alimentar um dashboard de BI. Ele precisa utilizar funções de agregação para resumir os dados.",
+                "pergunta": "Analise os itens sobre Funções de Agregação:\nI. COUNT(*) conta todas as linhas, inclusive as que possuem valores nulos.\nII. SUM() pode ser utilizado para somar campos do tipo data ou texto.\nIII. MAX() retorna o maior valor de um conjunto, aplicável a números, datas e textos.\nIV. Ao usar funções de agregação com outras colunas no SELECT, o GROUP BY é obrigatório.\n\nEstão corretos:",
+                "opcoes": [
+                "Apenas I e III",
+                "Apenas II e IV",
+                "Apenas I, III e IV",
+                "Todos os itens"
+                ],
+                "respostaCorreta": 2,
+                "pontuacao": 10
+            },
+            {
+                "textoBase": "Um sistema bancário está processando um lote de pagamentos. No meio do processamento, ocorre uma falha de energia. O banco de dados precisa garantir que o dinheiro não tenha sumido de uma conta sem aparecer na outra.",
+                "pergunta": "Analise os itens sobre Transações (ACID):\nI. COMMIT é o comando que efetiva permanentemente as alterações no banco.\nII. ROLLBACK é usado para desfazer alterações realizadas desde o início da transação.\nIII. A propriedade de Atomicidade garante que a transação seja feita totalmente ou não seja feita.\nIV. Transações só funcionam com comandos de leitura (SELECT).\n\nEstão corretos:",
+                "opcoes": [
+                "Apenas I e II",
+                "Apenas III e IV",
+                "Apenas I, II e III",
+                "Todos os itens"
+                ],
+                "respostaCorreta": 2,
+                "pontuacao": 10
+            },
+            {
+                "textoBase": "Uma holding precisa unificar os relatórios de duas empresas subsidiárias (Empresa A e Empresa B) que possuem estruturas de tabelas idênticas. O relatório final precisa listar todos os funcionários de ambas.",
+                "pergunta": "Analise os itens sobre Operadores de Conjunto:\nI. UNION combina os resultados de dois SELECTs e remove linhas duplicadas por padrão.\nII. UNION ALL combina os resultados mantendo todas as linhas, inclusive duplicatas.\nIII. INTERSECT retorna apenas as linhas que aparecem em ambos os conjuntos de resultados.\nIV. Para usar esses operadores, as colunas selecionadas devem ter tipos de dados compatíveis.\n\nEstão corretos:",
+                "opcoes": [
+                "Apenas I e II",
+                "Apenas III e IV",
+                "Apenas I, II e III",
+                "Todos os itens (I, II, III e IV)"
+                ],
+                "respostaCorreta": 3,
+                "pontuacao": 10
+            }
+            ]
+        },
+          "Python Orientação a Objetos": {
+          "questoes": [
+            {
+              "textoBase": "Em Python, tudo é um objeto. Para criar nossos próprios tipos de objetos personalizados que agrupam dados e comportamentos, utilizamos um modelo ou 'planta baixa'. Essa estrutura fundamental define quais atributos e métodos os objetos criados a partir dela terão.",
+              "pergunta": "Qual palavra-chave reservada é utilizada para definir uma nova classe em Python?",
+              "opcoes": [
+                "def",
+                "class",
+                "object",
+                "struct"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Ao instanciar um objeto, frequentemente precisamos definir valores iniciais para seus atributos (como o nome e idade de uma 'Pessoa'). Em Python, existe um método especial, conhecido como construtor, que é executado automaticamente no momento da criação da instância.",
+              "pergunta": "Qual é o nome do método especial utilizado para inicializar os atributos de um objeto?",
+              "opcoes": [
+                "__create__",
+                "__start__",
+                "__init__",
+                "__construct__"
+              ],
+              "respostaCorreta": 2,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Dentro dos métodos de uma classe, precisamos de uma maneira de referenciar a própria instância que está chamando aquele método, para diferenciar variáveis locais de atributos do objeto. Por convenção (embora não seja palavra reservada), utiliza-se um nome específico para o primeiro parâmetro dos métodos de instância.",
+              "pergunta": "Qual é o nome convencional do primeiro parâmetro de métodos de instância que representa o próprio objeto?",
+              "opcoes": [
+                "this",
+                "self",
+                "instance",
+                "me"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Um dos pilares da POO permite que uma classe 'filha' herde atributos e métodos de uma classe 'mãe', promovendo o reuso de código. Em Python, a sintaxe para isso é direta e definida na declaração da classe.",
+              "pergunta": "Qual a sintaxe correta para criar uma classe 'Carro' que herda da classe 'Veiculo'?",
+              "opcoes": [
+                "class Carro extends Veiculo:",
+                "class Carro(Veiculo):",
+                "class Carro inherits Veiculo:",
+                "def class Carro(Veiculo):"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "O encapsulamento visa proteger o estado interno de um objeto. Embora Python não tenha modificadores de acesso estritos como 'private' ou 'protected' de outras linguagens, ele usa uma convenção de nomenclatura para indicar que um atributo não deve ser acessado diretamente de fora da classe (Name Mangling).",
+              "pergunta": "Como se deve nomear um atributo para torná-lo 'privado' (fortemente sugerido para uso interno) em Python?",
+              "opcoes": [
+                "private nome_atributo",
+                "_nome_atributo (um sublinhado)",
+                "__nome_atributo (dois sublinhados)",
+                "$nome_atributo"
+              ],
+              "respostaCorreta": 2,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Em certos cenários, queremos que objetos de classes diferentes (como 'Gato' e 'Cachorro') respondam ao mesmo método (como 'emitir_som()') de maneiras distintas. O código que chama o método não precisa saber a classe exata do objeto, apenas que ele possui aquele método.",
+              "pergunta": "Qual conceito de Orientação a Objetos permite que diferentes classes implementem métodos com a mesma assinatura, mas comportamentos diferentes?",
+              "opcoes": [
+                "Encapsulamento",
+                "Polimorfismo",
+                "Herança Múltipla",
+                "Instanciação"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Às vezes, um atributo deve pertencer à classe como um todo, e não a cada objeto individualmente. Isso significa que se o valor for alterado, ele muda para todas as instâncias dessa classe. Em outras linguagens, isso é chamado de atributo estático.",
+              "pergunta": "Onde são definidos os Atributos de Classe (Class Attributes) em Python?",
+              "opcoes": [
+                "Dentro do método __init__ usando self",
+                "Diretamente no corpo da classe, fora de qualquer método",
+                "Dentro de um método decorado com @staticmethod",
+                "Fora da definição da classe, no escopo global"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Quando sobrescrevemos um método da classe pai em uma classe filha, muitas vezes queremos manter o comportamento original e apenas adicionar algo novo. Para não reescrever o código da classe pai, precisamos chamá-lo explicitamente.",
+              "pergunta": "Qual função integrada é utilizada para chamar métodos da classe pai (superclasse) dentro da classe filha?",
+              "opcoes": [
+                "parent()",
+                "super()",
+                "base()",
+                "root()"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Python oferece uma maneira elegante de controlar o acesso a atributos, permitindo a criação de 'getters' e 'setters' sem alterar a sintaxe de acesso (obj.atributo). Isso é feito através de decoradores especiais.",
+              "pergunta": "Qual decorador é utilizado para transformar um método em um 'getter', permitindo acessá-lo como se fosse um atributo?",
+              "opcoes": [
+                "@classmethod",
+                "@staticmethod",
+                "@property",
+                "@getter"
+              ],
+              "respostaCorreta": 2,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Existem métodos dentro de uma classe que não precisam acessar nem modificar o estado do objeto (self) nem o estado da classe (cls). Eles funcionam como funções comuns, mas são mantidos dentro da classe por organização lógica.",
+              "pergunta": "Qual decorador define um método estático que não recebe 'self' nem 'cls' como primeiro argumento?",
+              "opcoes": [
+                "@staticmethod",
+                "@classmethod",
+                "@property",
+                "@voidmethod"
+              ],
+              "respostaCorreta": 0,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Python possui um conjunto de 'Métodos Mágicos' (Dunder Methods) que permitem que objetos personalizados interajam com a sintaxe nativa da linguagem, como operadores matemáticos ou funções como len().",
+              "pergunta": "Analise os itens sobre Métodos Mágicos:\nI. O método __str__ deve retornar uma representação em string legível para o usuário final.\nII. O método __repr__ deve retornar uma representação não ambígua do objeto, útil para debugging.\nIII. Implementar __add__ permite que objetos sejam somados usando o operador '+'.\nIV. O método __del__ é sempre chamado imediatamente quando usamos a palavra 'del', forçando a coleta de lixo instantânea.\n\nEstão corretos:",
+              "opcoes": [
+                "Apenas I e II",
+                "Apenas I, II e III",
+                "Apenas III e IV",
+                "Todos os itens"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 10
+            },
+            {
+              "textoBase": "A herança é um mecanismo poderoso, e Python suporta Herança Múltipla, o que pode gerar complexidade na ordem em que os métodos são buscados nas classes pais (Problema do Diamante).",
+              "pergunta": "Analise os itens sobre Herança em Python:\nI. Python suporta que uma classe herde de múltiplas classes pais simultaneamente.\nII. O MRO (Method Resolution Order) define a ordem de busca de métodos na hierarquia de classes.\nIII. Todas as classes em Python 3 herdam implicitamente da classe base 'object'.\nIV. Se duas classes pais têm um método com o mesmo nome, o Python gera um erro de compilação.\n\nEstão corretos:",
+              "opcoes": [
+                "Apenas I e II",
+                "Apenas III e IV",
+                "Apenas I, II e III",
+                "Todos os itens"
+              ],
+              "respostaCorreta": 2,
+              "pontuacao": 10
+            },
+            {
+              "textoBase": "Diferenciar métodos de instância, de classe e estáticos é crucial para uma boa arquitetura de software em Python, pois cada um tem acesso a escopos diferentes.",
+              "pergunta": "Analise os itens sobre Tipos de Métodos:\nI. Métodos de instância recebem 'self' e podem modificar o estado do objeto específico.\nII. Métodos de classe (@classmethod) recebem 'cls' e podem modificar o estado da classe, afetando todas as instâncias.\nIII. Métodos de classe são frequentemente utilizados como 'Factory Methods' (Fábricas) para criar instâncias de formas alternativas.\nIV. Métodos estáticos (@staticmethod) não podem acessar nem 'self' nem 'cls'.\n\nEstão corretos:",
+              "opcoes": [
+                "Apenas I e IV",
+                "Apenas II e III",
+                "Apenas I, II e III",
+                "Todos os itens (I, II, III e IV)"
+              ],
+              "respostaCorreta": 3,
+              "pontuacao": 10
+            },
+            {
+              "textoBase": "Classes Abstratas (ABC) são usadas para definir contratos (interfaces) que as subclasses são obrigadas a implementar, garantindo consistência na hierarquia.",
+              "pergunta": "Analise os itens sobre Classes Abstratas (módulo abc):\nI. Uma classe que herda de ABC e possui pelo menos um @abstractmethod não pode ser instanciada diretamente.\nII. As subclasses concretas são obrigadas a implementar todos os métodos abstratos da classe pai.\nIII. Métodos abstratos podem ter implementação na classe pai, desde que chamados via super().\nIV. O decorador @abstractmethod é opcional; qualquer método vazio é considerado abstrato automaticamente.\n\nEstão corretos:",
+              "opcoes": [
+                "Apenas I e II",
+                "Apenas I, II e III",
+                "Apenas III e IV",
+                "Todos os itens"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 10
+            },
+            {
+              "textoBase": "O conceito de 'Escopo' e 'Namespaces' em classes Python pode confundir iniciantes, especialmente a diferença entre atributos definidos na classe e atributos definidos no `__init__`.",
+              "pergunta": "Analise os itens sobre Atributos de Classe vs Instância:\nI. Atributos definidos dentro do __init__ usando 'self.variavel' são únicos para cada instância.\nII. Atributos definidos logo abaixo do 'class Nome:' são compartilhados por todas as instâncias (se forem mutáveis, cuidado!).\nIII. Se você alterar um atributo de classe através de uma instância (obj.attr_classe = 10), você cria um novo atributo de instância mascarando o da classe.\nIV. Listas declaradas como atributos de classe são compartilhadas; se uma instância adicionar um item, todas as outras enxergam a mudança.\n\nEstão corretos:",
+              "opcoes": [
+                "Apenas I e II",
+                "Apenas III e IV",
+                "Apenas I, II e III",
+                "Todos os itens (I, II, III e IV)"
+              ],
+              "respostaCorreta": 3,
+              "pontuacao": 10
+            }
+          ]
+        },
+          "Programação Web 1": {
+          "questoes": [
+            {
+              "textoBase": "Para que o navegador interprete corretamente o código de uma página e saiba qual versão da linguagem de marcação está sendo utilizada, é necessário declarar uma instrução específica na primeira linha do arquivo, antes mesmo da tag <html>.",
+              "pergunta": "(HTML) Qual é a declaração correta para documentos HTML5?",
+              "opcoes": [
+                "<!DOCTYPE xml>",
+                "<!DOCTYPE html>",
+                "<include html5>",
+                "<meta charset='html5'>"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "A Web Semântica é um conceito fundamental para acessibilidade e SEO (Otimização para Mecanismos de Busca). O HTML5 introduziu tags que descrevem o significado do conteúdo, não apenas sua aparência.",
+              "pergunta": "(HTML Semântico) Qual das tags abaixo NÃO é considerada uma tag semântica de estrutura?",
+              "opcoes": [
+                "<header>",
+                "<footer>",
+                "<div>",
+                "<article>"
+              ],
+              "respostaCorreta": 2,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "A principal característica da Web é a capacidade de conectar documentos através de hiperlinks. A tag <a> (âncora) é usada para criar esses links, mas ela precisa de um atributo essencial para saber o destino da navegação.",
+              "pergunta": "(HTML Atributos) Qual atributo da tag <a> define a URL de destino do link?",
+              "opcoes": [
+                "src",
+                "link",
+                "target",
+                "href"
+              ],
+              "respostaCorreta": 3,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "O CSS (Cascading Style Sheets) permite selecionar elementos HTML para aplicar estilos visuais. Existem diferentes formas de selecionar elementos, sendo os seletores de ID e Classe os mais comuns.",
+              "pergunta": "(CSS Seletores) Qual a sintaxe correta para selecionar um elemento que possui o atributo id='menu' no CSS?",
+              "opcoes": [
+                ".menu",
+                "#menu",
+                "*menu",
+                "@menu"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "O 'Box Model' (Modelo de Caixa) é o conceito central do layout em CSS. Ele define como as larguras, alturas, margens e preenchimentos interagem para determinar o tamanho final de um elemento na tela.",
+              "pergunta": "(CSS Box Model) Qual propriedade define o espaço interno entre o conteúdo do elemento e sua borda?",
+              "opcoes": [
+                "margin",
+                "border",
+                "padding",
+                "outline"
+              ],
+              "respostaCorreta": 2,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Para incluir estilos CSS em uma página HTML, a prática recomendada é utilizar arquivos externos. Isso facilita a manutenção e o cache do navegador.",
+              "pergunta": "(CSS Inclusão) Qual tag HTML é usada no <head> para vincular um arquivo CSS externo?",
+              "opcoes": [
+                "<style src='estilo.css'>",
+                "<css link='estilo.css'>",
+                "<script href='estilo.css'>",
+                "<link rel='stylesheet' href='estilo.css'>"
+              ],
+              "respostaCorreta": 3,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "O JavaScript é a linguagem de programação que traz interatividade para a web. Para manipular o conteúdo da página após o carregamento, o JS utiliza uma interface de programação que representa a estrutura HTML como uma árvore de objetos.",
+              "pergunta": "(JavaScript Conceitos) Qual é a sigla da interface que permite ao JavaScript acessar e manipular o HTML?",
+              "opcoes": [
+                "API",
+                "DOM (Document Object Model)",
+                "JSON",
+                "XML"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Desde o ECMAScript 6 (ES6), o JavaScript introduziu novas formas de declarar variáveis além do antigo 'var', oferecendo melhor controle de escopo e imutabilidade.",
+              "pergunta": "(JavaScript Variáveis) Qual palavra-chave é usada para declarar uma variável cujo valor NÃO deve ser reatribuído (uma constante)?",
+              "opcoes": [
+                "let",
+                "var",
+                "const",
+                "static"
+              ],
+              "respostaCorreta": 2,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Interatividade web frequentemente depende de 'escutar' ações do usuário, como cliques, movimentos do mouse ou envio de formulários.",
+              "pergunta": "(JavaScript Eventos) Qual método é utilizado para anexar um manipulador de eventos a um elemento HTML via JavaScript?",
+              "opcoes": [
+                "element.onClick = function",
+                "element.addEventListener('click', function)",
+                "element.listen('click')",
+                "element.handleEvent('click')"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Frequentemente precisamos buscar elementos específicos no HTML para alterar seu texto ou estilo via script. Existe um método clássico para recuperar um único elemento baseando-se em seu identificador único.",
+              "pergunta": "(JavaScript DOM) Qual comando seleciona o elemento <div id='resultado'></div>?",
+              "opcoes": [
+                "document.querySelector('.resultado')",
+                "document.getElementByClass('resultado')",
+                "document.getElementById('resultado')",
+                "document.tags('resultado')"
+              ],
+              "respostaCorreta": 2,
+              "pontuacao": 5
+            },
+            {
+              "textoBase": "Formulários são a principal forma de envio de dados do usuário para o servidor. A configuração correta das tags e atributos é vital para o funcionamento e acessibilidade.",
+              "pergunta": "Analise os itens sobre Formulários HTML:\nI. A tag <label> melhora a acessibilidade e deve ser associada a um input via atributo 'for' ou aninhamento.\nII. O atributo 'type' no <input> define se ele será texto, senha, checkbox, etc.\nIII. O método 'POST' envia dados visíveis na URL, sendo ideal para senhas.\nIV. O atributo 'required' impede o envio do formulário se o campo estiver vazio.\n\nEstão corretos:",
+              "opcoes": [
+                "Apenas I e II",
+                "Apenas I, II e IV",
+                "Apenas II e III",
+                "I, II, III e IV"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 10
+            },
+            {
+              "textoBase": "A 'Cascata' e a 'Especificidade' determinam qual regra CSS será aplicada quando houver conflito de estilos (ex: duas regras pintando o mesmo botão de cores diferentes).",
+              "pergunta": "Analise os itens sobre Especificidade CSS:\nI. Um seletor de ID (#header) tem peso maior que um seletor de Classe (.header).\nII. Estilos inline (no atributo style='') têm prioridade sobre estilos em arquivos externos.\nIII. O uso de !important deve ser evitado, pois sobrescreve quase todas as prioridades, dificultando a manutenção.\nIV. O seletor universal (*) tem a maior prioridade de todas.\n\nEstão corretos:",
+              "opcoes": [
+                "Apenas I e II",
+                "Apenas III e IV",
+                "Apenas I, II e III",
+                "Todos os itens"
+              ],
+              "respostaCorreta": 2,
+              "pontuacao": 10
+            },
+            {
+              "textoBase": "O layout moderno na web depende fortemente do Flexbox e do CSS Grid. O Flexbox é unidimensional (linha ou coluna) e resolve problemas antigos de alinhamento.",
+              "pergunta": "Analise os itens sobre CSS Flexbox:\nI. 'display: flex' transforma o elemento em um contêiner flexível.\nII. 'justify-content' alinha os itens ao longo do eixo principal (ex: horizontal).\nIII. 'align-items' alinha os itens ao longo do eixo transversal (ex: vertical).\nIV. 'flex-direction: column' muda o eixo principal para vertical.\n\nEstão corretos:",
+              "opcoes": [
+                "Apenas I e II",
+                "Apenas III e IV",
+                "Apenas I, II e III",
+                "Todos os itens (I, II, III e IV)"
+              ],
+              "respostaCorreta": 3,
+              "pontuacao": 10
+            },
+            {
+              "textoBase": "O JavaScript roda no lado do cliente (navegador) e possui características específicas de tipagem e execução.",
+              "pergunta": "Analise os itens sobre a linguagem JavaScript:\nI. JavaScript é uma linguagem de tipagem fraca e dinâmica (o tipo da variável pode mudar).\nII. 'NaN' (Not a Number) é um valor especial retornado quando uma operação matemática falha.\nIII. '==' compara apenas valor (faz coerção de tipo), enquanto '===' compara valor e tipo.\nIV. Arrays em JavaScript têm tamanho fixo e não podem crescer dinamicamente.\n\nEstão corretos:",
+              "opcoes": [
+                "Apenas I e II",
+                "Apenas I, II e III",
+                "Apenas III e IV",
+                "Todos os itens"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 10
+            },
+            {
+              "textoBase": "Entender como o navegador processa e renderiza a página é crucial para otimizar a experiência do usuário, especialmente o carregamento de scripts.",
+              "pergunta": "Analise os itens sobre Integração HTML/JS:\nI. Colocar a tag <script> no final do <body> (antes do fechamento) é uma prática comum para não bloquear a renderização visual.\nII. O atributo 'defer' na tag script faz com que ele seja executado apenas após o HTML ser analisado (parsed).\nIII. Se o JavaScript tentar acessar um elemento DOM que ainda não foi renderizado, ocorrerá um erro ou retornará null.\nIV. É impossível incluir JavaScript diretamente no HTML; ele deve estar sempre em arquivos .js separados.\n\nEstão corretos:",
+              "opcoes": [
+                "Apenas I e II",
+                "Apenas I, II e III",
+                "Apenas III e IV",
+                "Todos os itens"
+              ],
+              "respostaCorreta": 1,
+              "pontuacao": 10
+            }
+          ]
+        },
+          
+          "Programação de Aplicativos Móveis": {
+            questoes: [
+              {
+                textoBase: "O mercado de dispositivos móveis é dominado por dois principais sistemas operacionais. Um deles é desenvolvido por uma das maiores empresas de tecnologia do mundo e é conhecido por ser open source, permitindo que diversos fabricantes de smartphones o utilizem em seus aparelhos.",
+                pergunta: "Qual é o sistema operacional mobile desenvolvido pelo Google?",
+                opcoes: ["iOS", "Android", "Windows Phone", "BlackBerry OS"],
+                respostaCorreta: 1,
+                pontuacao: 10
+              },
+              {
+                textoBase: "Para distribuir aplicativos móveis, desenvolvedores precisam empacotar seu código em formatos específicos. Cada sistema operacional móvel possui seu próprio formato de arquivo. No caso do Android, existe um formato padrão que contém todo o código, recursos e configurações necessários para instalar o app.",
+                pergunta: "O que é um APK?",
+                opcoes: [
+                  "Um tipo de banco de dados",
+                  "Formato de arquivo de aplicativo Android",
+                  "Uma linguagem de programação",
+                  "Um framework web"
+                ],
+                respostaCorreta: 1,
+                pontuacao: 10
+              }
+            ]
+          }
+        };
+
+        // ============================================================================
+        // FIM DAS QUESTÕES
+        // ============================================================================
+
+        // Ícones SVG
+        const LockIcon = () => (
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        );
+
+        const AlertIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        );
+
+        const EyeIcon = () => (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        );
+
+        const DownloadIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+        );
+
+        // ============================================================================
+        // COMPONENTE PRINCIPAL
+        // ============================================================================
+
+        function SistemaProva() {
+          const [etapa, setEtapa] = useState('identificacao');
+          const [nomeAluno, setNomeAluno] = useState('');
+          const [turma, setTurma] = useState('');
+          const [disciplina, setDisciplina] = useState('');
+          const [questaoAtual, setQuestaoAtual] = useState(0);
+          const [respostasUsuario, setRespostasUsuario] = useState([]);
+          const [bloqueado, setBloqueado] = useState(false);
+          const [tentouCopiar, setTentouCopiar] = useState(false);
+          const fullscreenRef = useRef(null);
+
+          // Desabilitar copiar, colar, print screen
+          useEffect(() => {
+            const handleCopy = (e) => {
+              e.preventDefault();
+              setTentouCopiar(true);
+              setTimeout(() => setTentouCopiar(false), 3000);
+            };
+
+            const handleKeyDown = (e) => {
+              if (
+                e.key === 'PrintScreen' ||
+                (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'x' || e.key === 'C' || e.key === 'V' || e.key === 'X')) ||
+                e.key === 'F12'
+              ) {
+                e.preventDefault();
+                setTentouCopiar(true);
+                setTimeout(() => setTentouCopiar(false), 3000);
+              }
+            };
+
+            const handleContextMenu = (e) => {
+              e.preventDefault();
+            };
+
+            document.addEventListener('copy', handleCopy);
+            document.addEventListener('cut', handleCopy);
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('contextmenu', handleContextMenu);
+
+            return () => {
+              document.removeEventListener('copy', handleCopy);
+              document.removeEventListener('cut', handleCopy);
+              document.removeEventListener('keydown', handleKeyDown);
+              document.removeEventListener('contextmenu', handleContextMenu);
+            };
+          }, []);
+
+          // Monitorar mudança de aba/foco
+          useEffect(() => {
+            const handleVisibilityChange = () => {
+              if (document.hidden && etapa === 'prova') {
+                setBloqueado(true);
+                alert('Você saiu da aba da prova! A prova será reiniciada.');
+                reiniciarProva();
+              }
+            };
+
+            const handleBlur = () => {
+              if (etapa === 'prova') {
+                setBloqueado(true);
+                setTimeout(() => {
+                  if (document.hasFocus() === false) {
+                    alert('Você saiu da janela da prova! A prova será reiniciada.');
+                    reiniciarProva();
+                  }
+                }, 100);
+              }
+            };
+
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            window.addEventListener('blur', handleBlur);
+
+            return () => {
+              document.removeEventListener('visibilitychange', handleVisibilityChange);
+              window.removeEventListener('blur', handleBlur);
+            };
+          }, [etapa]);
+
+          // Forçar fullscreen
+          useEffect(() => {
+            if (etapa === 'prova' && fullscreenRef.current) {
+              const elem = fullscreenRef.current;
+              if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(err => {
+                  console.log('Erro ao entrar em fullscreen:', err);
+                });
+              }
+            }
+
+            const handleFullscreenChange = () => {
+              if (!document.fullscreenElement && etapa === 'prova') {
+                alert('Você saiu do modo tela cheia! A prova será reiniciada.');
+                reiniciarProva();
+              }
+            };
+
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+          }, [etapa]);
+
+          const reiniciarProva = () => {
+            setEtapa('identificacao');
+            setQuestaoAtual(0);
+            setRespostasUsuario([]);
+            setBloqueado(false);
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            }
+          };
+
+          const iniciarProva = () => {
+            if (!nomeAluno || !turma || !disciplina) {
+              alert('Por favor, preencha todos os campos!');
+              return;
+            }
+            setEtapa('prova');
+          };
+
+          const questoes = DISCIPLINAS_CONFIG[disciplina]?.questoes || [];
+
+          const responderQuestao = (indexResposta) => {
+            const novasRespostas = [...respostasUsuario];
+            novasRespostas[questaoAtual] = indexResposta;
+            setRespostasUsuario(novasRespostas);
+
+            if (questaoAtual < questoes.length - 1) {
+              setQuestaoAtual(questaoAtual + 1);
+            } else {
+              if (document.fullscreenElement) {
+                document.exitFullscreen();
+              }
+              setEtapa('gabarito');
+            }
+          };
+
+          const calcularResultado = () => {
+            let pontuacaoTotal = 0;
+            let pontuacaoMaxima = 0;
+
+            questoes.forEach((questao, index) => {
+              pontuacaoMaxima += questao.pontuacao;
+              if (respostasUsuario[index] === questao.respostaCorreta) {
+                pontuacaoTotal += questao.pontuacao;
+              }
+            });
+
+            return { pontuacaoTotal, pontuacaoMaxima };
+          };
+
+
+
+          const gerarPDF = () => {
+            const { pontuacaoTotal, pontuacaoMaxima } = calcularResultado();
+            const percentual = ((pontuacaoTotal / pontuacaoMaxima) * 100).toFixed(1);
+            
+            // Verificar se jsPDF está disponível
+            if (typeof window.jsPDF === 'undefined') {
+              alert('Biblioteca PDF não foi carregada. Usando formato TXT como fallback.');
+              gerarTXT();
+              return;
+            }
+
+            const { jsPDF } = window.jsPDF;
+            const doc = new jsPDF();
+            
+            // Configurações do PDF
+            const pageWidth = doc.internal.pageSize.width;
+            const margin = 20;
+            const lineHeight = 7;
+            let yPosition = margin;
+            
+            // Título
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('RESULTADO DA PROVA', pageWidth / 2, yPosition, { align: 'center' });
+            yPosition += 15;
+            
+            // Informações do aluno
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Aluno: ${nomeAluno}`, margin, yPosition);
+            yPosition += lineHeight;
+            doc.text(`Turma: ${turma}`, margin, yPosition);
+            yPosition += lineHeight;
+            doc.text(`Disciplina: ${disciplina}`, margin, yPosition);
+            yPosition += lineHeight;
+            doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, margin, yPosition);
+            yPosition += 15;
+            
+            // Separador
+            doc.setFont(undefined, 'bold');
+            doc.text('================================', margin, yPosition);
+            yPosition += lineHeight;
+            doc.text('RESULTADO FINAL', pageWidth / 2, yPosition, { align: 'center' });
+            yPosition += lineHeight;
+            doc.text('================================', margin, yPosition);
+            yPosition += 10;
+            
+            // Resultado final
+            doc.setFont(undefined, 'normal');
+            doc.text(`Pontuação: ${pontuacaoTotal} / ${pontuacaoMaxima}`, margin, yPosition);
+            yPosition += lineHeight;
+            doc.text(`Percentual: ${percentual}%`, margin, yPosition);
+            yPosition += 15;
+            
+            // Observação
+            doc.setFont(undefined, 'italic');
+            doc.text('Observação: Envie este arquivo ao professor.', margin, yPosition);
+            
+            // Gerar e baixar o PDF
+            const fileName = `Prova_${nomeAluno.replace(/\s/g, '_')}_${disciplina.replace(/\s/g, '_')}.pdf`;
+            doc.save(fileName);
+          };
+          
+
+          // Função fallback para TXT (caso jsPDF falhe)
+          const gerarTXT = () => {
+            const { pontuacaoTotal, pontuacaoMaxima } = calcularResultado();
+            const percentual = ((pontuacaoTotal / pontuacaoMaxima) * 100).toFixed(1);
+            
+            const conteudo = `RESULTADO DA PROVA
+
+Aluno: ${nomeAluno}
+Turma: ${turma}
+Disciplina: ${disciplina}
+Data: ${new Date().toLocaleDateString('pt-BR')}
+
+================================
+RESULTADO FINAL
+================================
+
+Pontuação: ${pontuacaoTotal} / ${pontuacaoMaxima}
+Percentual: ${percentual}%
+
+Observação: Envie este arquivo ao professor.
+`;
+
+            const blob = new Blob([conteudo], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Prova_${nomeAluno.replace(/\s/g, '_')}_${disciplina.replace(/\s/g, '_')}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+          };
+
+          if (etapa === 'identificacao') {
+            return (
+              <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full">
+                  <div className="flex items-center justify-center mb-6">
+                    <div className="text-gray-700 mr-2"><LockIcon /></div>
+                    <h1 className="text-2xl font-bold text-gray-800">Sistema de Prova</h1>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Nome Completo
+                      </label>
+                      <input
+                        type="text"
+                        value={nomeAluno}
+                        onChange={(e) => setNomeAluno(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        placeholder="Digite seu nome"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Turma
+                      </label>
+                      <select
+                        value={turma}
+                        onChange={(e) => setTurma(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+                      >
+                        <option value="">Selecione a turma</option>
+                        <option value="Sistemas de Informação">Sistemas de Informação</option>
+                        <option value="Análise e Desenvolvimento de Sistemas">Análise e Desenvolvimento de Sistemas</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Disciplina
+                      </label>
+                      <select
+                        value={disciplina}
+                        onChange={(e) => setDisciplina(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+                      >
+                        <option value="">Selecione a disciplina</option>
+                        {Object.keys(DISCIPLINAS_CONFIG).map(disc => (
+                          <option key={disc} value={disc}>{disc}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <button
+                      onClick={iniciarProva}
+                      className="w-full bg-gray-800 text-white py-3 rounded-md hover:bg-gray-700 transition-colors font-medium"
+                    >
+                      Iniciar Prova
+                    </button>
+
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mt-4">
+                      <p className="text-sm text-yellow-800">
+                        <strong>Atenção:</strong> A prova será realizada em tela cheia. Sair da tela reiniciará a prova.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (etapa === 'prova') {
+            const questao = questoes[questaoAtual];
+
+            return (
+              <div ref={fullscreenRef} className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                {tentouCopiar && (
+                  <div className="fixed top-4 right-4 bg-red-500 text-white px-4 py-3 rounded-md shadow-lg flex items-center z-50">
+                    <div className="mr-2"><AlertIcon /></div>
+                    Ação não permitida!
+                  </div>
+                )}
+
+                <div className="bg-white rounded-lg shadow-md p-8 max-w-2xl w-full">
+                  <div className="flex justify-between items-center mb-6">
+                    <div className="text-sm text-gray-600">
+                      Questão {questaoAtual + 1} de {questoes.length}
+                    </div>
+                    <div className="text-sm font-medium text-gray-700">
+                      {questao.pontuacao} pontos
+                    </div>
+                  </div>
+
+                  {questao.textoBase && (
+                    <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded">
+                      <p className="text-sm text-gray-700 leading-relaxed">
+                        {questao.textoBase}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="mb-6">
+                    <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                      {questao.pergunta}
+                    </h2>
+                  </div>
+
+                  <div className="space-y-3">
+                    {questao.opcoes.map((opcao, index) => (
+                      <button
+                        key={index}
+                        onClick={() => responderQuestao(index)}
+                        className="w-full text-left px-4 py-3 border-2 border-gray-300 rounded-md hover:border-gray-500 hover:bg-gray-50 transition-colors"
+                      >
+                        <span className="font-medium text-gray-700">{String.fromCharCode(65 + index)})</span> {opcao}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 flex items-center justify-center text-sm text-gray-500">
+                    <div className="mr-2"><EyeIcon /></div>
+                    Prova monitorada - Não saia da tela
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (etapa === 'gabarito') {
+            const { pontuacaoTotal, pontuacaoMaxima } = calcularResultado();
+            const percentual = ((pontuacaoTotal / pontuacaoMaxima) * 100).toFixed(1);
+
+            return (
+              <div className="min-h-screen bg-gray-50 p-4">
+                <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8">
+                  <h1 className="text-3xl font-bold text-gray-800 mb-2">Prova Finalizada</h1>
+                  <div className="text-gray-600 mb-6">
+                    <p>Aluno: <strong>{nomeAluno}</strong></p>
+                    <p>Turma: <strong>{turma}</strong></p>
+                    <p>Disciplina: <strong>{disciplina}</strong></p>
+                  </div>
+
+                  <div className="bg-gray-100 rounded-lg p-6 mb-6">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Resultado Final</h2>
+                    <p className="text-4xl font-bold text-gray-900">
+                      {pontuacaoTotal} / {pontuacaoMaxima} pontos
+                    </p>
+                    <p className="text-xl text-gray-600 mt-2">
+                      Aproveitamento: {percentual}%
+                    </p>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">Gabarito Detalhado</h3>
+
+                  <div className="space-y-4 mb-6">
+                    {questoes.map((questao, index) => {
+                      const respostaUsuario = respostasUsuario[index];
+                      const correta = questao.respostaCorreta;
+                      const acertou = respostaUsuario === correta;
+
+                      return (
+                        <div key={index} className={`border-2 rounded-lg p-4 ${acertou ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50'}`}>
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800">Questão {index + 1}</h4>
+                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${acertou ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+                              {acertou ? `+${questao.pontuacao} pontos` : '0 pontos'}
+                            </span>
+                          </div>
+                          
+                          {questao.textoBase && (
+                            <div className="mb-3 p-3 bg-white rounded text-xs text-gray-600 italic border-l-2 border-gray-300">
+                              <strong>Texto Base:</strong> {questao.textoBase}
+                            </div>
+                          )}
+                          
+                          <p className="text-gray-700 mb-3 font-medium">{questao.pergunta}</p>
+                          <div className="space-y-2">
+                            <p className="text-sm">
+                              <strong>Sua resposta:</strong> {questao.opcoes[respostaUsuario] || 'Não respondida'}
+                            </p>
+                            {!acertou && (
+                              <p className="text-sm">
+                                <strong>Resposta correta:</strong> {questao.opcoes[correta]}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
+                    <p className="text-sm text-blue-800">
+                      <strong>Instruções:</strong> Clique no botão abaixo para baixar seu gabarito e envie o arquivo ao professor.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={gerarPDF}
+                    className="w-full bg-gray-800 text-white py-3 rounded-md hover:bg-gray-700 transition-colors font-medium flex items-center justify-center"
+                  >
+                    <div className="mr-2"><DownloadIcon /></div>
+                    Baixar Gabarito
+                  </button>
+                </div>
+              </div>
+            );
+          }
+
+          return null;
+        }
+
+        // Renderizar o aplicativo
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<SistemaProva />);
+    </script>
+</body>
+</html>
