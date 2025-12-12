@@ -365,7 +365,7 @@
                 "Todos os itens"
               ],
               "respostaCorreta": 1,
-              "pontuacao": 10
+              "pontuacao": 5
             },
             {
               "textoBase": "A herança é um mecanismo poderoso, e Python suporta Herança Múltipla, o que pode gerar complexidade na ordem em que os métodos são buscados nas classes pais (Problema do Diamante).",
@@ -377,7 +377,7 @@
                 "Todos os itens"
               ],
               "respostaCorreta": 2,
-              "pontuacao": 10
+              "pontuacao": 5
             },
             {
               "textoBase": "Diferenciar métodos de instância, de classe e estáticos é crucial para uma boa arquitetura de software em Python, pois cada um tem acesso a escopos diferentes.",
@@ -389,7 +389,7 @@
                 "Todos os itens (I, II, III e IV)"
               ],
               "respostaCorreta": 3,
-              "pontuacao": 10
+              "pontuacao": 5
             },
             {
               "textoBase": "Classes Abstratas (ABC) são usadas para definir contratos (interfaces) que as subclasses são obrigadas a implementar, garantindo consistência na hierarquia.",
@@ -401,7 +401,7 @@
                 "Todos os itens"
               ],
               "respostaCorreta": 1,
-              "pontuacao": 10
+              "pontuacao": 5
             },
             {
               "textoBase": "O conceito de 'Escopo' e 'Namespaces' em classes Python pode confundir iniciantes, especialmente a diferença entre atributos definidos na classe e atributos definidos no `__init__`.",
@@ -413,7 +413,7 @@
                 "Todos os itens (I, II, III e IV)"
               ],
               "respostaCorreta": 3,
-              "pontuacao": 10
+              "pontuacao": 5
             }
           ]
         },
@@ -602,29 +602,7 @@
           ]
         },
           
-          "Programação de Aplicativos Móveis": {
-            questoes: [
-              {
-                textoBase: "O mercado de dispositivos móveis é dominado por dois principais sistemas operacionais. Um deles é desenvolvido por uma das maiores empresas de tecnologia do mundo e é conhecido por ser open source, permitindo que diversos fabricantes de smartphones o utilizem em seus aparelhos.",
-                pergunta: "Qual é o sistema operacional mobile desenvolvido pelo Google?",
-                opcoes: ["iOS", "Android", "Windows Phone", "BlackBerry OS"],
-                respostaCorreta: 1,
-                pontuacao: 10
-              },
-              {
-                textoBase: "Para distribuir aplicativos móveis, desenvolvedores precisam empacotar seu código em formatos específicos. Cada sistema operacional móvel possui seu próprio formato de arquivo. No caso do Android, existe um formato padrão que contém todo o código, recursos e configurações necessários para instalar o app.",
-                pergunta: "O que é um APK?",
-                opcoes: [
-                  "Um tipo de banco de dados",
-                  "Formato de arquivo de aplicativo Android",
-                  "Uma linguagem de programação",
-                  "Um framework web"
-                ],
-                respostaCorreta: 1,
-                pontuacao: 10
-              }
-            ]
-          }
+  
         };
 
         // ============================================================================
@@ -815,7 +793,6 @@
 
           const gerarPDF = () => {
             const { pontuacaoTotal, pontuacaoMaxima } = calcularResultado();
-            const percentual = ((pontuacaoTotal / pontuacaoMaxima) * 100).toFixed(1);
             
             // Verificar se jsPDF está disponível
             if (typeof window.jsPDF === 'undefined') {
@@ -861,10 +838,12 @@
             yPosition += 10;
             
             // Resultado final
-            doc.setFont(undefined, 'normal');
-            doc.text(`Pontuação: ${pontuacaoTotal} / ${pontuacaoMaxima}`, margin, yPosition);
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(`PONTUAÇÃO OBTIDA: ${pontuacaoTotal} pontos`, margin, yPosition);
             yPosition += lineHeight;
-            doc.text(`Percentual: ${percentual}%`, margin, yPosition);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Total possível: ${pontuacaoMaxima} pontos`, margin, yPosition);
             yPosition += 15;
             
             // Observação
