@@ -59,7 +59,7 @@
       // ============================================================================
 
       const DISCIPLINAS_CONFIG = {
-        "Inteligência Artificial II": {
+        "Inteligência Artificial I": {
           questoes: [
             {
               textoBase:
@@ -208,6 +208,227 @@
               ],
               respostaCorreta: 2,
               pontuacao: 2.0,
+            },
+          ],
+        },
+
+        "Inteligência Artificial II": {
+          questoes: [
+            {
+              textoBase:
+                "Durante a etapa de limpeza de dados, a decisão sobre preencher ou remover uma coluna com valores ausentes costuma ser orientada pelo percentual de valores nulos presentes nela.",
+              pergunta: "Assinale a alternativa correta sobre esse critério:",
+              opcoes: [
+                "Independentemente do percentual de nulos, a melhor prática é sempre remover a linha inteira.",
+                "Colunas com poucos valores nulos devem ser removidas, e colunas com muitos nulos devem ser preenchidas.",
+                "Quando a coluna possui poucos valores ausentes (até cerca de 5%), geralmente vale a pena preenchê-los; quando a maioria dos valores está ausente (acima de 40-50%), costuma ser melhor remover a coluna.",
+                "Colunas com muitos valores nulos devem sempre ser preenchidas com zero, independentemente do tipo de dado.",
+                "O percentual de valores ausentes não deve influenciar a decisão de preencher ou remover uma coluna.",
+              ],
+              respostaCorreta: 2,
+              pontuacao: 2.0,
+            },
+            {
+              textoBase:
+                "Para o preenchimento de valores ausentes em variáveis numéricas, a escolha entre média e mediana depende da distribuição dos dados.",
+              pergunta: "Assinale a alternativa correta:",
+              opcoes: [
+                "A mediana é mais indicada quando os dados possuem muitos outliers, pois é menos sensível a valores extremos do que a média.",
+                "A média deve ser usada quando há muitos outliers na variável, pois ela é menos sensível a valores extremos.",
+                "Média e mediana produzem sempre o mesmo resultado, independentemente da distribuição dos dados.",
+                "Variáveis numéricas nunca devem ser preenchidas com média ou mediana, apenas com valor fixo.",
+                "A mediana só pode ser aplicada a variáveis categóricas.",
+              ],
+              respostaCorreta: 0,
+              pontuacao: 2.0,
+            },
+            {
+              textoBase:
+                "Após a identificação de outliers em uma variável numérica (por exemplo, pela regra do IQR ou do Z-score), é necessário decidir como tratá-los.",
+              pergunta:
+                "Assinale a alternativa correta sobre o tratamento de outliers:",
+              opcoes: [
+                "Todo outlier identificado é obrigatoriamente um erro de medição e deve ser removido do conjunto de dados.",
+                "Outliers nunca influenciam modelos de regressão, portanto não precisam ser analisados.",
+                "O tratamento de outliers consiste exclusivamente em substituí-los pela moda da variável.",
+                "Outliers só existem em variáveis categóricas, pois dependem da frequência das categorias.",
+                "A decisão entre remover, substituir ou manter os outliers deve considerar se eles são erros de coleta ou valores legítimos, pois removê-los indevidamente pode descartar informação relevante.",
+              ],
+              respostaCorreta: 4,
+              pontuacao: 2.0,
+            },
+            {
+              textoBase:
+                "A regra do Intervalo Interquartil (IQR), proposta por John Tukey, é amplamente utilizada para identificar outliers em uma variável numérica.",
+              pergunta:
+                "Assinale a alternativa que descreve corretamente essa regra:",
+              opcoes: [
+                "O IQR é a diferença entre o valor máximo e o valor mínimo da variável.",
+                "O IQR é calculado como a diferença entre o terceiro quartil (Q3) e o primeiro quartil (Q1); valores menores que Q1 – 1,5×IQR ou maiores que Q3 + 1,5×IQR são considerados outliers.",
+                "Segundo essa regra, qualquer valor acima da média é automaticamente considerado um outlier.",
+                "O IQR corresponde à média dos valores entre o primeiro e o último quartil, sem relação com outliers.",
+                "A margem de tolerância de 1,5×IQR é aplicada apenas ao terceiro quartil (Q3), nunca ao primeiro (Q1).",
+              ],
+              respostaCorreta: 1,
+              pontuacao: 3.0,
+            },
+            {
+              textoBase:
+                "Outra técnica utilizada para identificar outliers é a regra do Z-score.",
+              pergunta: "Assinale a alternativa correta sobre ela:",
+              opcoes: [
+                "O Z-score é calculado exclusivamente a partir do primeiro e do terceiro quartil da variável.",
+                "Quanto menor o valor absoluto do Z-score, mais distante da média está o dado, indicando um possível outlier.",
+                "O Z-score não tem relação com o desvio padrão da variável analisada.",
+                "O Z-score é calculado a partir da média e do desvio padrão da variável; valores com |z| maior que 3 costumam ser considerados outliers.",
+                "Valores com Z-score igual a 0 são sempre classificados como outliers.",
+              ],
+              respostaCorreta: 3,
+              pontuacao: 3.0,
+            },
+            {
+              textoBase:
+                "Em Machine Learning, variáveis com escalas muito diferentes podem desequilibrar o modelo, dando mais peso às variáveis com valores numericamente maiores. Duas técnicas comuns para lidar com esse problema são a normalização e a padronização.",
+              pergunta:
+                "Assinale a alternativa correta sobre a normalização (Min-Max):",
+              opcoes: [
+                "A normalização reescala os dados para um intervalo fixo, geralmente entre 0 e 1, preservando a distribuição relativa dos dados.",
+                "A normalização transforma os dados para que tenham média 0 e desvio padrão 1.",
+                "A normalização é aplicável apenas a variáveis categóricas.",
+                "Após a normalização, os valores da variável deixam de ter relação com os valores originais.",
+                "A normalização é o mesmo processo que a remoção de outliers.",
+              ],
+              respostaCorreta: 0,
+              pontuacao: 2.0,
+            },
+            {
+              textoBase: "Sobre a padronização (StandardScaler):",
+              pergunta: "Assinale a alternativa correta:",
+              opcoes: [
+                "A padronização sempre limita os valores da variável ao intervalo entre 0 e 1.",
+                "A padronização é utilizada exclusivamente para tratar valores ausentes.",
+                "Padronizar uma variável numérica a torna automaticamente categórica.",
+                "A padronização elimina a necessidade de dividir os dados em treino e teste.",
+                "A padronização transforma os dados de modo que a variável resultante tenha média igual a 0 e desvio padrão igual a 1, sendo ideal para algoritmos que assumem distribuição aproximadamente normal, como a Regressão Linear.",
+              ],
+              respostaCorreta: 4,
+              pontuacao: 2.0,
+            },
+            {
+              textoBase:
+                "A correlação de Pearson é uma das técnicas apresentadas para analisar a relevância de variáveis em relação a uma variável-alvo.",
+              pergunta:
+                "Assinale a alternativa correta sobre a correlação de Pearson:",
+              opcoes: [
+                "A correlação de Pearson varia exclusivamente entre 0 e 1.",
+                "Um valor de correlação igual a 0 indica uma relação linear perfeita entre as variáveis.",
+                "Mede a força e a direção da relação linear entre duas variáveis numéricas, variando de -1 (correlação negativa perfeita) a +1 (correlação positiva perfeita), sendo valores próximos de 0 indicativos de pouca ou nenhuma relação linear.",
+                "A correlação de Pearson é indicada principalmente para variáveis categóricas nominais.",
+                "Correlação próxima de -1 indica que não existe qualquer relação entre as variáveis.",
+              ],
+              respostaCorreta: 2,
+              pontuacao: 2.0,
+            },
+            {
+              textoBase:
+                "A regressão univariada ajusta um modelo simples (Y = aX + b) para cada variável explicativa individualmente em relação à variável-alvo, sendo o R² (coeficiente de determinação) a métrica utilizada para avaliar seu poder explicativo.",
+              pergunta: "Assinale a alternativa correta sobre esse conceito:",
+              opcoes: [
+                "A regressão univariada relaciona simultaneamente todas as variáveis explicativas com a variável-alvo em um único modelo.",
+                "Quanto mais próximo de 1 for o R² de uma variável, maior é o poder explicativo dela, isoladamente, sobre a variável-alvo.",
+                "O R² pode ser interpretado da mesma forma que o VIF, indicando multicolinearidade entre variáveis.",
+                "Um R² igual a 0 indica que a variável explica 100% da variação da variável-alvo.",
+                "A regressão univariada não pode ser utilizada como critério de seleção de variáveis.",
+              ],
+              respostaCorreta: 1,
+              pontuacao: 3.0,
+            },
+            {
+              textoBase:
+                "O VIF (Variance Inflation Factor) é uma métrica utilizada para detectar multicolinearidade entre variáveis explicativas.",
+              pergunta: "Assinale a alternativa correta sobre o VIF:",
+              opcoes: [
+                "Quanto maior o VIF de uma variável, menor é a sua correlação com as demais variáveis explicativas.",
+                "O VIF é calculado exclusivamente a partir da variável-alvo, sem relação com as demais variáveis explicativas.",
+                "Um VIF igual a 0 indica presença de multicolinearidade severa.",
+                "O VIF indica o quanto a variância de uma variável explicativa está sendo inflada por correlação com outras variáveis explicativas; valores de VIF acima de 5 ou 10 costumam indicar problema de multicolinearidade.",
+                "O VIF é aplicável apenas a variáveis categóricas nominais.",
+              ],
+              respostaCorreta: 3,
+              pontuacao: 3.0,
+            },
+            {
+              textoBase:
+                "Ao combinar diferentes critérios para selecionar as variáveis mais relevantes para um modelo, é comum considerar, em conjunto, a correlação com a variável-alvo, o R² individual (regressão univariada) e o VIF.",
+              pergunta:
+                "Assinale a alternativa que reflete corretamente a lógica desses critérios combinados:",
+              opcoes: [
+                "Busca-se variáveis com alta correlação com o alvo, R² individual relativamente alto e VIF baixo (idealmente abaixo de 5), de modo a reduzir a redundância entre variáveis.",
+                "Busca-se variáveis com baixa correlação com o alvo e VIF o mais alto possível.",
+                "O R² individual e o VIF medem exatamente a mesma característica da variável.",
+                "Quanto maior o VIF de uma variável, mais indicada ela é para compor o modelo final.",
+                "A correlação com o alvo é o único critério relevante; R² e VIF podem ser ignorados.",
+              ],
+              respostaCorreta: 0,
+              pontuacao: 2.0,
+            },
+            {
+              textoBase:
+                "Antes de treinar um modelo de aprendizado de máquina, os dados costumam ser divididos em um conjunto de treino e um conjunto de teste.",
+              pergunta: "Assinale a alternativa correta sobre essa etapa:",
+              opcoes: [
+                "O conjunto de teste deve conter exatamente os mesmos registros do conjunto de treino.",
+                "Não é necessário separar dados de teste quando o objetivo é apenas treinar o modelo, independentemente da avaliação.",
+                "Quanto maior o conjunto de teste em relação ao de treino, melhor o modelo aprende os padrões dos dados.",
+                "A separação entre treino e teste é utilizada exclusivamente em modelos de classificação, nunca em modelos de regressão.",
+                "A divisão entre treino e teste permite avaliar a capacidade do modelo de generalizar para dados que não foram utilizados durante o seu treinamento.",
+              ],
+              respostaCorreta: 4,
+              pontuacao: 2.0,
+            },
+            {
+              textoBase:
+                "Para avaliar o desempenho de modelos de regressão, costumam ser utilizadas métricas como MAE (Erro Absoluto Médio), RMSE (Raiz do Erro Quadrático Médio) e R² (Coeficiente de Determinação).",
+              pergunta:
+                "Assinale a alternativa correta sobre a interpretação dessas métricas:",
+              opcoes: [
+                "Quanto maiores forem o MAE e o RMSE, melhor é o desempenho do modelo.",
+                "O R² varia de -1 a 0, sendo -1 o melhor valor possível para um modelo de regressão.",
+                "Quanto menores forem o MAE e o RMSE, e quanto mais próximo de 1 estiver o R², melhor tende a ser o desempenho do modelo.",
+                "O RMSE é uma métrica menos sensível a erros grandes do que o MAE.",
+                "MAE, RMSE e R² medem exatamente a mesma característica do modelo, de formas equivalentes.",
+              ],
+              respostaCorreta: 2,
+              pontuacao: 2.0,
+            },
+            {
+              textoBase:
+                "Sobre as características do modelo de Regressão Linear:",
+              pergunta: "Assinale a alternativa correta:",
+              opcoes: [
+                "É um modelo baseado em múltiplas árvores de decisão combinadas por meio de bagging.",
+                "É um modelo que divide os dados em regras de decisão sucessivas, formando uma estrutura em árvore.",
+                "É o modelo mais indicado para capturar relações fortemente não lineares entre as variáveis.",
+                "É um modelo que busca ajustar uma relação linear entre as variáveis independentes e a variável-alvo, sendo considerado simples e de fácil interpretação, adequado principalmente para dados lineares ou quase lineares.",
+                "É um modelo que não pode ser utilizado para problemas de regressão, apenas de classificação.",
+              ],
+              respostaCorreta: 3,
+              pontuacao: 2.0,
+            },
+            {
+              textoBase:
+                "Árvore de Decisão e Random Forest são dois modelos de regressão apresentados no material, com características distintas quanto à sua estrutura e robustez.",
+              pergunta:
+                "Assinale a alternativa correta sobre a comparação entre esses dois modelos:",
+              opcoes: [
+                "A Árvore de Decisão é composta por diversas Random Forests combinadas.",
+                "O Random Forest é um conjunto de várias árvores de decisão treinadas com amostras e variáveis diferentes, cujas previsões são combinadas (por exemplo, pela média), o que costuma reduzir o overfitting comum em uma única árvore de decisão.",
+                "O Random Forest utiliza sempre uma única árvore de decisão, sem qualquer forma de combinação de modelos.",
+                "A Árvore de Decisão é, em todos os casos, mais robusta a ruídos e outliers do que o Random Forest.",
+                "Random Forest e Árvore de Decisão são exatamente o mesmo algoritmo, apenas com nomes diferentes.",
+              ],
+              respostaCorreta: 1,
+              pontuacao: 3.0,
             },
           ],
         },
