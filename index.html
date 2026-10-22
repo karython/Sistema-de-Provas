@@ -212,6 +212,175 @@
           ],
         },
 
+        "Desenvolvimento Web com Flask": {
+          questoes: [
+            {
+              textoBase:
+                'Uma startup precisa escolher um framework Python para seu novo sistema web. O líder técnico defende o Flask, argumentando que a equipe quer controlar a arquitetura e escolher as próprias ferramentas. Um colega discorda, dizendo que, por ser um "microframework", o Flask só serviria para projetos pequenos e limitados.',
+              pergunta:
+                "Sobre o conceito de microframework aplicado ao Flask, é correto afirmar que:",
+              opcoes: [
+                "O Flask é limitado a aplicações de um único arquivo, sendo incapaz de suportar projetos de grande porte.",
+                '"Micro" significa um núcleo pequeno e explícito, que entrega o essencial (rotas, requisições, respostas e templates) e deixa recursos como banco de dados e formulários para extensões escolhidas pelo desenvolvedor.',
+                "O Flask já inclui obrigatoriamente um ORM, um painel administrativo e um sistema de autenticação, assim como o Django.",
+                "O Flask é um framework assíncrono focado exclusivamente em APIs JSON, com documentação automática.",
+              ],
+              respostaCorreta: 1,
+              pontuacao: 1.5,
+            },
+            {
+              textoBase:
+                'Em um sistema de cadastro, foi definida a seguinte rota para exibir os dados de um usuário:\n\n@app.route("/usuarios/<int:user_id>")\ndef ver_usuario(user_id):\n    return f"Usuário {user_id}"\n\nUm usuário digita no navegador o endereço /usuarios/abc.',
+              pergunta: "O comportamento esperado da aplicação é:",
+              opcoes: [
+                'A função ver_usuario é executada e exibe "Usuário abc".',
+                "A função ver_usuario é executada com user_id igual a 0.",
+                "A aplicação é encerrada com erro interno do servidor (500).",
+                'O Flask retorna automaticamente 404 (não encontrado), pois o conversor int não aceita o valor "abc".',
+              ],
+              respostaCorreta: 3,
+              pontuacao: 1.5,
+            },
+            {
+              textoBase:
+                'Uma loja virtual exibe seus produtos em páginas. Ao clicar em "próxima página", o navegador acessa o endereço /produtos?pagina=2&ordem=preco. O desenvolvedor precisa ler, dentro da view, os valores de pagina e ordem.',
+              pergunta:
+                "O atributo do objeto request que contém esses valores é:",
+              opcoes: [
+                "request.args, que contém os parâmetros da query string.",
+                "request.form, que contém os campos de formulários enviados por POST.",
+                "request.files, que contém os arquivos enviados pelo usuário.",
+                "request.headers, que contém os cabeçalhos da requisição HTTP.",
+              ],
+              respostaCorreta: 0,
+              pontuacao: 1.5,
+            },
+            {
+              textoBase:
+                "Para agilizar o login, um desenvolvedor decidiu guardar na sessão do Flask (session) o e-mail e a senha do usuário, argumentando que, por ser assinada com a SECRET_KEY, a sessão seria um local seguro para qualquer informação.",
+              pergunta: "Sobre a sessão no Flask, é correto afirmar que:",
+              opcoes: [
+                "A sessão é armazenada exclusivamente no servidor e nunca é enviada ao navegador, por isso pode guardar qualquer dado.",
+                "A sessão é criptografada, impedindo que o usuário leia ou altere seu conteúdo; a decisão do desenvolvedor está correta.",
+                "A sessão é um cookie assinado, mas não criptografado: o usuário pode ler seu conteúdo, mas não alterá-lo sem a SECRET_KEY. Por isso, devem ser guardados apenas identificadores, nunca senhas ou dados sensíveis.",
+                "A sessão dispensa a configuração da SECRET_KEY, que é usada apenas para criptografar o banco de dados.",
+              ],
+              respostaCorreta: 2,
+              pontuacao: 1.5,
+            },
+            {
+              textoBase:
+                'Um site institucional possui 15 páginas que repetem o mesmo cabeçalho, menu e rodapé. A cada alteração no menu, a equipe precisa editar os 15 arquivos HTML. Além disso, um estagiário passou a aplicar o filtro | safe nos comentários enviados pelos visitantes, para que "a formatação aparecesse corretamente".',
+              pergunta:
+                "Considerando os recursos do Jinja2, assinale a alternativa correta:",
+              opcoes: [
+                "A repetição deve ser resolvida copiando o HTML para dentro das views Python; o uso de | safe nos comentários é recomendado.",
+                "A herança de templates ({% extends %} e {% block %}) permite criar um layout base e reaproveitá-lo; já o | safe desliga o escape automático e, aplicado a dados enviados por usuários, expõe o site a ataques XSS.",
+                "O {% include %} só pode ser usado em templates sem variáveis; o | safe ativa uma proteção extra contra XSS.",
+                "A herança de templates exige que todas as páginas tenham exatamente o mesmo conteúdo; o | safe apenas converte o texto para maiúsculas.",
+              ],
+              respostaCorreta: 1,
+              pontuacao: 1.5,
+            },
+            {
+              textoBase:
+                'Em um projeto organizado com application factory, o blueprint de autenticação foi criado e registrado da seguinte forma:\n\n# app/auth/__init__.py\nbp = Blueprint("auth", __name__)\n\n# app/__init__.py  (dentro de create_app)\napp.register_blueprint(auth_bp, url_prefix="/auth")\n\n# app/auth/routes.py\n@bp.route("/login")\ndef login(): ...',
+              pergunta: "Sobre essa estrutura, é correto afirmar que:",
+              opcoes: [
+                "A view de login ficará acessível em /login, pois o url_prefix é ignorado quando há uma factory.",
+                "Para gerar a URL dessa view em um template, deve-se escrever o endereço manualmente, pois url_for não funciona com blueprints.",
+                'A view ficará acessível em /auth/login, e sua URL deve ser gerada com url_for("auth.login"), usando o nome do blueprint como prefixo.',
+                "Blueprints devem ser divididos por tipo de arquivo (um para todas as rotas, outro para todos os formulários), e não por domínio.",
+              ],
+              respostaCorreta: 2,
+              pontuacao: 1.5,
+            },
+            {
+              textoBase:
+                "Uma biblioteca digital lista 100 livros por página e, para cada livro, exibe o nome do autor acessando livro.autor.nome. Ao ativar SQLALCHEMY_ECHO = True, a equipe percebeu que a página dispara 101 consultas ao banco de dados, o que a deixa lenta.",
+              pergunta:
+                "O problema identificado e a solução adequada são, respectivamente:",
+              opcoes: [
+                "Problema N+1 (uma consulta para a lista e uma para cada autor); resolve-se carregando os autores junto com os livros, com joinedload ou selectinload.",
+                "Falta de pool de conexões; resolve-se aumentando o pool_size para 101 conexões.",
+                "Ausência de migrações; resolve-se executando flask db upgrade.",
+                "Excesso de validação dos dados; resolve-se removendo os validadores dos formulários.",
+              ],
+              respostaCorreta: 0,
+              pontuacao: 1.5,
+            },
+            {
+              textoBase:
+                'Um sistema Flask foi escalado horizontalmente: passou a rodar em três servidores atrás de um Nginx, que distribui as requisições entre eles. Após a mudança, usuários relataram que arquivos enviados "às vezes somem" e que o limite de tentativas de login não funciona corretamente. A equipe descobriu que os uploads eram gravados no disco local de cada servidor e que o controle de tentativas ficava em uma variável global em memória.',
+              pergunta:
+                "Considerando os princípios de escalonamento apresentados, a causa e a correção do problema são:",
+              opcoes: [
+                "O Nginx não suporta múltiplos servidores; a correção é voltar a usar apenas o servidor de desenvolvimento flask run.",
+                "O número de workers está errado; a correção é configurar exatamente um worker por servidor.",
+                "O banco de dados é o gargalo; a correção é criar réplicas de leitura.",
+                "A aplicação não é stateless (sem estado); a correção é manter o estado em serviços compartilhados, como uploads em armazenamento de objetos (ex.: S3) e rate limit e cache no Redis.",
+              ],
+              respostaCorreta: 3,
+              pontuacao: 1.5,
+            },
+            {
+              textoBase:
+                "Em um formulário de cadastro, todos os campos possuem o atributo required no HTML. Por isso, o desenvolvedor considerou desnecessário validar os dados no servidor. Um colega sugeriu usar o Flask-WTF e o método validate_on_submit() na view.",
+              pergunta:
+                "Sobre a validação de dados em Flask, é correto afirmar que:",
+              opcoes: [
+                "A validação do navegador é suficiente, pois o usuário não consegue enviar dados que não passem pelo formulário HTML.",
+                "A validação do navegador é apenas conforto para o usuário, não proteção; validate_on_submit() verifica se a requisição é POST, se o token CSRF é válido e se todos os validadores do formulário passaram.",
+                "O método validate_on_submit() apenas verifica se o formulário foi exibido na tela, sem checar os dados enviados.",
+                "A validação no servidor deve ser usada somente em APIs JSON; formulários HTML não precisam dela.",
+              ],
+              respostaCorreta: 1,
+              pontuacao: 1.5,
+            },
+            {
+              textoBase:
+                "Em um aplicativo de lista de tarefas, todas as rotas exigem login. Um usuário autenticado percebeu que, ao trocar o número na URL /tarefas/42/editar para /tarefas/43/editar, conseguia visualizar e alterar a tarefa de outra pessoa.",
+              pergunta: "A falha descrita e a forma correta de corrigi-la são:",
+              opcoes: [
+                "Falha de autenticação; a correção é exigir que o usuário faça login novamente a cada requisição.",
+                "Ataque de XSS; a correção é remover o filtro | safe dos templates.",
+                "Falha de autorização (IDOR); a correção é verificar, em toda edição ou exclusão, se o recurso pertence ao usuário logado (tarefa.usuario_id == current_user.id), retornando 403 ou 404 caso contrário.",
+                "Ataque de força bruta; a correção é aplicar rate limit de 5 tentativas por minuto na rota de edição.",
+              ],
+              respostaCorreta: 2,
+              pontuacao: 1.5,
+            },
+            {
+              textoBase:
+                "Uma equipe mantém um sistema Flask cujo código está todo em um único arquivo app.py, com cerca de 3 mil linhas. As regras de negócio (como cálculo de descontos e validação de estoque) estão escritas diretamente dentro das views. A equipe enfrenta erros de importação circular entre o app e os modelos, tem dificuldade em rodar testes com um banco separado do de produção e precisa alterar o código para trocar as configurações entre desenvolvimento e produção.",
+              pergunta:
+                'Analise os itens sobre a arquitetura de aplicações Flask:\nI. A application factory (create_app) monta e devolve a aplicação, permitindo criar instâncias com configurações diferentes, como teste e produção, e evitando importações circulares.\nII. Blueprints devem ser divididos por tipo de arquivo, reunindo todas as rotas em um módulo e todos os formulários em outro.\nIII. Na configuração por ambiente, segredos como SECRET_KEY e DATABASE_URL devem vir de variáveis de ambiente, e não do código.\nIV. Segundo o princípio "rotas magras, serviços gordos", as regras de negócio ficam na camada de serviços, e a view apenas lê a entrada, chama o serviço e devolve a resposta.\n\nEstão corretos:',
+              opcoes: [
+                "Apenas I e II",
+                "Apenas I, III e IV",
+                "Apenas II e IV",
+                "Todos os itens (I, II, III e IV)",
+              ],
+              respostaCorreta: 1,
+              pontuacao: 5,
+            },
+            {
+              textoBase:
+                "Uma auditoria de segurança em um sistema Flask em produção encontrou os seguintes problemas: as senhas dos usuários estão gravadas no banco em texto puro; algumas consultas SQL são montadas concatenando o texto digitado pelo usuário; os formulários não possuem token CSRF; o modo debug está ativado no servidor; e a SECRET_KEY está escrita no código, que é versionado no Git.",
+              pergunta:
+                "Analise os itens sobre os problemas encontrados e suas defesas:\nI. As senhas devem ser armazenadas apenas como hash com salt, usando funções como generate_password_hash e check_password_hash.\nII. Montar SQL concatenando o texto digitado pelo usuário é seguro, desde que o campo do formulário HTML tenha o atributo required.\nIII. O modo debug pode permanecer ativo em produção, pois apenas exibe mensagens de erro mais detalhadas, sem riscos ao servidor.\nIV. Quem obtém a SECRET_KEY consegue forjar sessões de qualquer usuário; por isso, ela deve ficar em variável de ambiente e nunca no repositório Git.\n\nEstão corretos:",
+              opcoes: [
+                "Apenas I e IV",
+                "Apenas I, II e IV",
+                "Apenas II e III",
+                "Todos os itens (I, II, III e IV)",
+              ],
+              respostaCorreta: 0,
+              pontuacao: 5,
+            },
+          ],
+        },
+
         "Inteligência Artificial II": {
           questoes: [
             {
